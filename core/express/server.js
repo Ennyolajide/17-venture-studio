@@ -230,7 +230,7 @@ function Server(serverConfig = {}) {
       } catch (error) {
         const statusCode = !error.isApplicationError
           ? 500
-          : errorCodeMappings[error.errorCode] || 400;
+          : error.httpStatusCode || errorCodeMappings[error.errorCode] || 400;
 
         const requestLog = createRequestLog(expressRequest);
 
@@ -246,6 +246,7 @@ function Server(serverConfig = {}) {
         responseComponents.body.message = error.isApplicationError
           ? error.message
           : 'Some error occured.';
+        responseComponents.body.code = error.isApplicationError ? error.errorCode : undefined;
         responseComponents.body.errors = error.details || undefined;
         responseComponents.body.data = error.context;
 
